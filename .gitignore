@@ -1,0 +1,20 @@
+# Bender dependencies and build artifacts
+.bender/
+Bender.lock
+
+# Generated files
+generated/
+*.d
+
+# Temporary files
+*.tmp
+*.log
+
+# Build outputs
+*.o
+*.so
+*.a
+
+# OS-specific files
+.DS_Store
+Thumbs.db
