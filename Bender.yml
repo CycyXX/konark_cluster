@@ -1,0 +1,17 @@
+# Copyright 2024 ETH Zurich and University of Bologna.
+# Solderpad Hardware License, Version 0.51, see LICENSE for details.
+# SPDX-License-Identifier: SHL-0.51
+
+package:
+  name: konark_cluster
+  authors:
+    - "Your Name <your.email@example.com>"
+
+dependencies:
+  snitch_cluster: { git: "https://github.com/pulp-platform/snitch_cluster.git", rev: "5b2fccd96c42812774c20ab2f9b811e164809789" }
+
+sources:
+  - src/konark_cluster.sv
+
+targets:
+  - snitch_cluster_wrapper
