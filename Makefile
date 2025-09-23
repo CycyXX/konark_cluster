@@ -17,7 +17,6 @@ PEAKRDL          ?= peakrdl
 # Include snitch cluster
 SN_CFG	  ?= $(KC_ROOT)/cfg/konark_cluster.json
 SN_ROOT   = $(shell $(BENDER) path snitch_cluster)
-# SN_GEN_DIR = $(SYSTEM_GENERATED_RTL_DIR)
 include $(SN_ROOT)/make/common.mk
 include $(SN_ROOT)/make/rtl.mk
 
@@ -85,58 +84,25 @@ SN_GEN_DIR = $(KC_GEN_DIR)
 include $(SN_ROOT)/make/common.mk
 include $(SN_ROOT)/make/rtl.mk
 
-.PHONY: sn-hw-clean sn-hw-all
+# .PHONY: sn-hw-clean sn-hw-all
 
-sn-hw-all: $(SN_CLUSTER_WRAPPER) $(SN_CLUSTER_PKG)
-sn-hw-clean:
-	rm -rf $(SN_CLUSTER_WRAPPER) $(SN_CLUSTER_PKG)
-
-
-###################
-# Physical Design #
-###################
-
-# PD_REMOTE ?= git@iis-git.ee.ethz.ch:picobello/picobello-pd.git
-# PD_COMMIT ?= main
-# PD_DIR = $(KC_ROOT)/pd
-# SPU_REMOTE ?= git@iis-git.ee.ethz.ch:picobello/fhg_spu_cluster.git
-# SPU_COMMIT ?= main
-# SPU_DIR = $(KC_ROOT)/.deps/fhg_spu_cluster
-
-# .PHONY: init-pd clean-pd
-
-# init-pd: $(PD_DIR) $(SPU_DIR)
-# $(PD_DIR):
-# 	git clone $(PD_REMOTE) $(PD_DIR)
-# 	cd $(PD_DIR) && git checkout $(PD_COMMIT)
-
-# $(SPU_DIR):
-# 	-git clone $(SPU_REMOTE) $(SPU_DIR)
-# 	-cd $(SPU_DIR) && git checkout $(SPU_COMMIT)
-
-# clean-pd:
-# 	rm -rf $(PD_DIR)
-# 	rm -rf $(SPU_DIR)
-
-# -include $(PD_DIR)/pd.mk
-
+# sn-hw-all: $(SN_CLUSTER_WRAPPER) $(SN_CLUSTER_PKG)
+# sn-hw-clean:
+# 	rm -rf $(SN_CLUSTER_WRAPPER) $(SN_CLUSTER_PKG)
 
 #########################
 # General Phony targets #
 #########################
 
-# KC_HW_ALL += $(CHS_HW_ALL)
-# KC_HW_ALL += $(CHS_SIM_ALL)
-# KC_HW_ALL += $(KC_GEN_DIR)/floo_picobello_noc_pkg.sv
 # KC_HW_ALL += $(KC_RDL_HW_ALL)
 # KC_HW_ALL += update-sn-cfg
 
 # .PHONY: picobello-hw-all picobello-clean clean
 
-# picobello-hw-all all: $(KC_HW_ALL) sn-hw-all
+# konark_cluster-hw-all all: $(KC_HW_ALL) sn-hw-all
 # 	$(MAKE) $(KC_HW_ALL)
 
-# picobello-hw-clean clean: sn-hw-clean floo-clean
+# konark_cluster-hw-clean clean: sn-hw-clean
 # 	rm -rf $(BENDER_ROOT)
 
 ############
@@ -197,6 +163,44 @@ Black=\033[0m
 Green=\033[1;32m
 help:
 	@echo -e "Konark Cluster help"
+	@echo -e "Makefile ${Green}targets${Black} for konark_cluster"
+	@echo -e "Use 'make <target>' where <target> is one of:"
+	@echo -e ""
+	@echo -e "${Green}help           	     ${Black}Show an overview of all Makefile targets."
+	@echo -e ""
+	@echo -e "General targets:"
+# 	@echo -e "${Green}all                  ${Black}Alias for konark_cluster-hw-all."
+# 	@echo -e "${Green}clean                ${Black}Alias for konark_cluster-hw-clean."
+	@echo -e ""
+	@echo -e "Source generation targets:"
+# 	@echo -e "${Green}konark_cluster-hw-all     ${Black}Build all RTL."
+# 	@echo -e "${Green}konark_cluster-hw-clean   ${Black}Clean everything."
+	@echo -e "${Green}sn-rtl               ${Black}Generate Snitch Cluster wrapper RTL."
+	@echo -e "${Green}sn-clean-rtl         ${Black}Clean Snitch Cluster wrapper RTL."
+	@echo -e ""
+	@echo -e "Software:"
+# 	@echo -e "${Green}sw                   ${Black}Compile all software tests."
+# 	@echo -e "${Green}sw-clean             ${Black}Clean all software tests."
+	@echo -e "${Green}sn-sw                ${Black}Compile Snitch software: runtime, tests and apps."
+	@echo -e "${Green}sn-clean-sw          ${Black}Clean Snitch software: runtime, tests and apps."
+	@echo -e "${Green}sn-tests             ${Black}Compile Snitch software tests."
+	@echo -e "${Green}sn-clean-tests       ${Black}Clean Snitch software tests."
+	@echo -e ""
+	@echo -e "Simulation targets:"
+# 	@echo -e "${Green}vsim-compile         ${Black}Compile with Questasim."
+# 	@echo -e "${Green}vsim-run             ${Black}Run QuestaSim simulation in GUI mode w/o optimization."
+# 	@echo -e "${Green}vsim-run-batch       ${Black}Run QuestaSim simulation in batch mode w/ optimization."
+# 	@echo -e "${Green}vsim-clean           ${Black}Clean QuestaSim simulation files."
+	@echo -e ""
+	@echo -e "Additional miscellaneous targets:"
+# 	@echo -e "${Green}traces               ${Black}Generate the better readable traces in .logs/trace_hart_<hart_id>.txt."
+# 	@echo -e "${Green}annotate             ${Black}Annotate the better readable traces in .logs/trace_hart_<hart_id>.s with the source code related with the retired instructions."
+# 	@echo -e "${Green}dvt-flist            ${Black}Generate a file list for the VSCode DVT plugin."
+	@echo -e "${Green}python-venv          ${Black}Create a Python virtual environment and install the required packages."
+	@echo -e "${Green}python-venv-clean    ${Black}Remove the Python virtual environment."
+	@echo -e "${Green}verible-fmt          ${Black}Format SystemVerilog files using Verible."
+
+
 # 	@echo -e "Makefile ${Green}targets${Black} for picobello"
 # 	@echo -e "Use 'make <target>' where <target> is one of:"
 # 	@echo -e ""

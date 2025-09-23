@@ -24,6 +24,7 @@ tabulate
 hjson  # for reggen
 
 # For peakrdl
-peakrdl
+peakrdl==1.4.0
+systemrdl-compiler==1.29.3
 peakrdl-rawheader @ git+https://github.com/colluca/PeakRDL-rawheader.git@7b8dbc9ad5854dc1cdaf36d4ea024c29ffb00a4c
 peakrdl-markdown

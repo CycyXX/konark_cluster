@@ -14,6 +14,9 @@ export SN_LLVM_BINROOT=/usr/scratch2/vulcano/colluca/tools/riscv32-snitch-llvm-a
 # Create the python venv
 if [ ! -d ".venv" ]; then
   make python-venv
+  source .venv/bin/activate
+  python -m pip install -r requirements.txt                       # ToDo(cdurrer): not tested
+  python -m pip install $(shell $(BENDER) path snitch_cluster)    # ToDo(cdurrer): not tested
 fi
 
 # Activate the python venv only if not already active

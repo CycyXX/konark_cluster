@@ -2,7 +2,7 @@
 
 *Konark* is developed as part of the [PULP (Parallel Ultra-Low Power) project](https://pulp-platform.org/), a joint effort between ETH Zurich and the University of Bologna.
 
-## 🚧 Getting started (currently in early development)
+## Getting started (currently in early development)
 
 ### Environment setup for IIS-members
 
@@ -37,7 +37,7 @@ By default, it will use the `python` in your `$PATH`. If you want to use a speci
 
 * Snitch software tests require the Clang compiler extended with Snitch-specific instructions. There are some precompiled releases available on the [PULP Platform LLVM Project](https://github.com/pulp-platform/llvm-project/releases/download/0.12.0/riscv32-pulp-llvm-ubuntu2004-0.12.0.tar.gz) fork that are ready to be downloaded and unzipped.
 
-Once LLVM and GCC are obtained, export a `LLVM_BINROOT` environment variable to the binary folder of the LLVM toolchain installation:
+Once LLVM is obtained, export a `LLVM_BINROOT` environment variable to the binary folder of the LLVM toolchain installation:
 
 ```bash
 export LLVM_BINROOT=/path/to/llvm/bin
@@ -59,9 +59,10 @@ After setting up the environment, you can generate all the RTL code for the Kona
 make all
 ```
 
-or to just build the snitch cluster:
+or to just build/clean just the snitch cluster:
 ```bash
-make sn-hw-all
+make sn-rtl
+make sn-clean-rtl
 ```
 
 ### Compile software tests
@@ -86,5 +87,5 @@ Additionally, you can run the following command to get a list of all available c
 make help
 ```
 
-## 🔐 License
+## License
 Unless specified otherwise in the respective file headers, all code checked into this repository is made available under a permissive license. All hardware sources are licensed under the Solderpad Hardware License 0.51 (see [`LICENSE`](LICENSE)), and all software sources are licensed under the Apache License 2.0.
