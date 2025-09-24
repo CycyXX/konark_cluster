@@ -8,8 +8,12 @@ package:
     - "Cyrill Durrer <cdurrer@iis.ee.ethz.ch>"
 
 dependencies:
-  # axi:                { git: "https://github.com/pulp-platform/axi.git",                      rev: "master" }
-  snitch_cluster:       { git: "https://github.com/pulp-platform/snitch_cluster.git",           rev: "5b2fccd96c42812774c20ab2f9b811e164809789" } #"4652c6b05886757c5cbe3dfe77c196dcd71e08e7" } #"5d6c957c70e3824e2330d8308eb904724cd41cbe" }
+  axi:                { git: "https://github.com/pulp-platform/axi.git",                        rev: "bec548fa2a9b18cbd7531105bb1fdf481ea8ad49" }
+  snitch_cluster:     { git: "https://github.com/pulp-platform/snitch_cluster.git",             rev: "5b2fccd96c42812774c20ab2f9b811e164809789" } #"4652c6b05886757c5cbe3dfe77c196dcd71e08e7" } #"5d6c957c70e3824e2330d8308eb904724cd41cbe" }
+  hci:                { git: "https://github.com/pulp-platform/hci.git",                        rev: "5421524afca701e45a83d0f1ec47568c019e021a" }
+  neureka:            { git: "https://github.com/pulp-platform/neureka.git",                    rev: "main"             }
+  datamover:          { git: "https://github.com/pulp-platform/datamover.git",                  rev: "transpose"        }
+
 
 workspace:
   package_links:
@@ -20,17 +24,18 @@ sources:
   # package. Files in level 1 only depend on files in level 0, files in level 2 on files in
   # levels 1 and 0, etc. Files within a level are ordered alphabetically.
   # Level 0
-  - target: pb_gen_rtl
+  - target: kc_gen_rtl
     files:
       # Level 0.0
-      - .generated/snitch_cluster_pkg.sv
+      # - .generated/snitch_cluster_pkg.sv
+      - working_dir/snitch_cluster/hw/generated/snitch_cluster_pkg.sv
       # - .generated/pb_soc_regs_pkg.sv
       # Level 0.1
       # - .generated/pb_soc_regs.sv
-      - .generated/snitch_cluster_wrapper.sv
+      # - .generated/snitch_cluster_wrapper.sv
+      - working_dir/snitch_cluster/hw/generated/snitch_cluster_wrapper.sv
 
   # Level 1
-  # - hw/picobello_pkg.sv
   - hw/snitch_hwpe_subsystem.sv
   - hw/snitch_tcdm_aligner.sv
   # Level 2
@@ -41,11 +46,13 @@ sources:
 
   - target: any(simulation, test)
     include_dirs:
-      - .generated
+      # - .generated
+      - working_dir/snitch_cluster/hw/generated
       - target/sim/include
     files:
+      - target/sim/src/vip_snitch_cluster.sv
       - target/sim/src/testharness_konark_cluster.sv
-      # - target/sim/src/tb_konark_cluster.sv
+      - target/sim/src/tb_bin_konark.sv
 
 
   # - target: asic

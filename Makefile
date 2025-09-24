@@ -5,18 +5,19 @@
 # Author: Cyrill Durrer <cdurrer@iis.ee.ethz.ch>
 
 KC_ROOT ?= $(shell pwd)
-KC_GEN_DIR = $(KC_ROOT)/.generated
+# KC_GEN_DIR = $(KC_ROOT)/.generated
 BENDER_ROOT ?= $(KC_ROOT)/.bender
 
 # Executables
-BENDER           ?= bender -d $(KC_ROOT)
+BENDER        ?= bender -d $(KC_ROOT)
 VERIBLE_FMT      ?= verible-verilog-format
 VERIBLE_FMT_ARGS ?= --flagfile .verilog_format --inplace --verbose
 PEAKRDL          ?= peakrdl
 
 # Include snitch cluster
-SN_CFG	  ?= $(KC_ROOT)/cfg/konark_cluster.json
+# SN_CFG	  ?= $(KC_ROOT)/cfg/konark_cluster.json
 SN_ROOT   = $(shell $(BENDER) path snitch_cluster)
+# SN_GEN_DIR = $(KC_GEN_DIR)
 include $(SN_ROOT)/make/common.mk
 include $(SN_ROOT)/make/rtl.mk
 
@@ -29,7 +30,7 @@ BENDER_LOCK = $(KC_ROOT)/Bender.lock
 # Bender flags #
 ################
 
-COMMON_TARGS += -t snitch_cluster
+COMMON_TARGS += -t rtl -t snitch_cluster -t kc_gen_rtl
 # COMMON_TARGS += -t rtl -t cva6 -t cv64a6_imafdcsclic_sv39 -t snitch_cluster -t pb_gen_rtl
 # SIM_TARGS += -t simulation -t test -t idma_test
 
@@ -80,9 +81,50 @@ COMMON_TARGS += -t snitch_cluster
 # Snitch Cluster #
 ##################
 
-SN_GEN_DIR = $(KC_GEN_DIR)
-include $(SN_ROOT)/make/common.mk
-include $(SN_ROOT)/make/rtl.mk
+TARGET = konark_cluster
+
+SN_BENDER = $(BENDER)
+
+SN_BOOTDATA_TPL = $(SN_ROOT)/hw/snitch_cluster/test/bootdata.cc.tpl
+$(eval $(call sn_cluster_gen_rule,$(SN_GEN_DIR)/bootdata.cc,$(SN_BOOTDATA_TPL)))
+
+SN_TB_CC_SOURCES += \
+	$(SN_TB_DIR)/ipc.cc \
+	$(SN_TB_DIR)/common_lib.cc \
+	$(SN_GEN_DIR)/bootdata.cc
+
+SN_RTL_CC_SOURCES += $(SN_TB_DIR)/rtl_lib.cc
+
+SN_VLT_CC_SOURCES += \
+	$(SN_TB_DIR)/verilator_lib.cc \
+	$(SN_TB_DIR)/tb_bin.cc
+
+SN_TB_CC_FLAGS += \
+	-std=c++14 \
+	-I$(SN_FESVR)/include \
+	-I$(SN_TB_DIR)
+
+SN_FESVR = $(SN_WORK_DIR)
+SN_FESVR_VERSION ?= 35d50bc40e59ea1d5566fbd3d9226023821b1bb6
+
+# Eventually it could be an option to package this statically using musl libc.
+$(SN_WORK_DIR)/$(SN_FESVR_VERSION)_unzip: | $(SN_WORK_DIR)
+	wget -O $(dir $@)/$(SN_FESVR_VERSION) https://github.com/riscv/riscv-isa-sim/tarball/$(SN_FESVR_VERSION)
+	tar xfm $(dir $@)$(SN_FESVR_VERSION) --strip-components=1 -C $(dir $@)
+	touch $@
+
+$(SN_WORK_DIR)/lib/libfesvr.a: $(SN_WORK_DIR)/$(SN_FESVR_VERSION)_unzip
+	cd $(dir $<)/ && ./configure --prefix `pwd`
+	make -C $(dir $<) install-config-hdrs install-hdrs libfesvr.a
+	mkdir -p $(dir $@)
+	cp $(dir $<)libfesvr.a $@
+
+SN_VERILATOR_SEPP=oseda
+# SN_VSIM_BUILDDIR = $(KC_ROOT)/target/sim/build/work-vsim
+include $(SN_ROOT)/make/vsim.mk
+
+# include $(SN_ROOT)/make/common.mk
+# include $(SN_ROOT)/make/rtl.mk
 
 # .PHONY: sn-hw-clean sn-hw-all
 
@@ -94,16 +136,15 @@ include $(SN_ROOT)/make/rtl.mk
 # General Phony targets #
 #########################
 
-# KC_HW_ALL += $(KC_RDL_HW_ALL)
-# KC_HW_ALL += update-sn-cfg
+KC_HW_ALL += $(KC_RDL_HW_ALL)
 
-# .PHONY: picobello-hw-all picobello-clean clean
+.PHONY: konark_cluster-hw-all konark_cluster-hw-clean clean
 
-# konark_cluster-hw-all all: $(KC_HW_ALL) sn-hw-all
-# 	$(MAKE) $(KC_HW_ALL)
+konark_cluster-hw-all all: $(KC_HW_ALL) sn-rtl
+	$(MAKE) $(KC_HW_ALL)
 
-# konark_cluster-hw-clean clean: sn-hw-clean
-# 	rm -rf $(BENDER_ROOT)
+konark_cluster-hw-clean clean: sn-clean-rtl
+	rm -rf $(BENDER_ROOT)
 
 ############
 # Software #
@@ -116,7 +157,7 @@ include $(SN_ROOT)/make/sw.mk
 # Simulation #
 ##############
 
-# TB_DUT = tb_konark_cluster_top
+TB_DUT = testharness_konark_cluster
 
 # include $(KC_ROOT)/target/sim/vsim/vsim.mk
 # include $(KC_ROOT)/target/sim/traces.mk
@@ -145,7 +186,8 @@ python-venv: .venv
 	. $@/bin/activate && \
 	python -m pip install --upgrade pip setuptools && \
 	python -m pip install --cache-dir $(PIP_CACHE_DIR) -r requirements.txt && \
-	python -m pip install --cache-dir $(PIP_CACHE_DIR) "$(shell $(BENDER) path snitch_cluster)[kernels]"
+	python -m pip install $(shell $(BENDER) path snitch_cluster)
+# ToDo(cdurrer): not tested
 
 python-venv-clean:
 	rm -rf .venv
