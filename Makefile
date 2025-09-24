@@ -85,6 +85,11 @@ TARGET = konark_cluster
 
 SN_BENDER = $(BENDER)
 
+SN_VSIM = $(VSIM)
+SN_VOPT = $(VOPT)
+SN_VLOG = $(VLOG)
+SN_VLIB = $(VLIB)
+
 SN_BOOTDATA_TPL = $(SN_ROOT)/hw/snitch_cluster/test/bootdata.cc.tpl
 $(eval $(call sn_cluster_gen_rule,$(SN_GEN_DIR)/bootdata.cc,$(SN_BOOTDATA_TPL)))
 
