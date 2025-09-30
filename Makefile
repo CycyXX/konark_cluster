@@ -6,12 +6,14 @@
 
 KC_ROOT ?= $(shell pwd)
 # KC_GEN_DIR = $(KC_ROOT)/.generated
-BENDER_ROOT ?= $(KC_ROOT)/.bender
+BENDER_ROOT 	 ?= $(KC_ROOT)/.bender
 
-KC_TOP_MODULE = tb_bin_konark
+KC_TOP_MODULE 	  = tb_bin_konark
+
+DEBUG    		 ?= ON  # ON to turn on wave logging
 
 # Executables
-BENDER        ?= bender -d $(KC_ROOT)
+BENDER        	 ?= bender -d $(KC_ROOT)
 VERIBLE_FMT      ?= verible-verilog-format
 VERIBLE_FMT_ARGS ?= --flagfile .verilog_format --inplace --verbose
 PEAKRDL          ?= peakrdl
