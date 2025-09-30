@@ -9,7 +9,7 @@ module tb_bin_konark;
 
   parameter realtime ClkPeriod = 1ns;
 
-  testharness_konark #(
+  testharness_konark_cluster #(
     .ClkPeriod(ClkPeriod)
   ) fix();
 

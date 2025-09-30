@@ -8,6 +8,8 @@ KC_ROOT ?= $(shell pwd)
 # KC_GEN_DIR = $(KC_ROOT)/.generated
 BENDER_ROOT ?= $(KC_ROOT)/.bender
 
+KC_TOP_MODULE = tb_bin_konark
+
 # Executables
 BENDER        ?= bender -d $(KC_ROOT)
 VERIBLE_FMT      ?= verible-verilog-format
@@ -90,6 +92,8 @@ SN_VOPT = $(VOPT)
 SN_VLOG = $(VLOG)
 SN_VLIB = $(VLIB)
 
+SN_VSIM_TOP_MODULE = $(KC_TOP_MODULE)
+
 SN_BOOTDATA_TPL = $(SN_ROOT)/hw/snitch_cluster/test/bootdata.cc.tpl
 $(eval $(call sn_cluster_gen_rule,$(SN_GEN_DIR)/bootdata.cc,$(SN_BOOTDATA_TPL)))
 
@@ -162,7 +166,7 @@ include $(SN_ROOT)/make/sw.mk
 # Simulation #
 ##############
 
-TB_DUT = testharness_konark_cluster
+TB_DUT = $(KC_TOP_MODULE)
 
 # include $(KC_ROOT)/target/sim/vsim/vsim.mk
 # include $(KC_ROOT)/target/sim/traces.mk
